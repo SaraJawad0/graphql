@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — Reboot01</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/profile.css"/>
+</head>
+<body>
+  <div class="grid-bg"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <span class="brand-tag">01</span>
+      <span class="brand-name">REBOOT PROFILE</span>
+    </div>
+    <div class="header-right">
+      <span id="header-login" class="header-user"></span>
+      <button id="logout-btn" class="btn-logout">Log Out</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- Loading state -->
+    <div id="loading" class="loading-screen">
+      <div class="loader-ring"></div>
+      <p>Loading your profile...</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="load-error" class="load-error hidden">
+      <p id="load-error-msg">Something went wrong.</p>
+      <button onclick="window.location.reload()" class="btn-retry">Retry</button>
+    </div>
+
+    <!-- Profile content — filled by JS -->
+    <div id="profile-content" class="hidden">
+
+      <!-- Hero -->
+      <section class="hero-section">
+        <div class="hero-info">
+          <div class="avatar" id="avatar-char">?</div>
+          <div>
+            <h2 id="user-login"></h2>
+            <p id="user-id" class="mono muted"></p>
+          </div>
+        </div>
+        <div class="stat-chips">
+          <div class="chip">
+            <span class="chip-label">Total XP</span>
+            <span class="chip-value" id="total-xp">—</span>
+          </div>
+          <div class="chip">
+            <span class="chip-label">Audit Ratio</span>
+            <span class="chip-value" id="audit-ratio">—</span>
+          </div>
+          <div class="chip">
+            <span class="chip-label">Level</span>
+            <span class="chip-value" id="user-level">—</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info cards -->
+      <section class="cards-row">
+        <div class="card">
+          <p class="card-title">XP Given (Audits Done)</p>
+          <p class="card-big" id="xp-up">—</p>
+        </div>
+        <div class="card">
+          <p class="card-title">XP Received (Audited)</p>
+          <p class="card-big" id="xp-down">—</p>
+        </div>
+        <div class="card">
+          <p class="card-title">Projects Passed</p>
+          <p class="card-big accent" id="projects-passed">—</p>
+        </div>
+        <div class="card">
+          <p class="card-title">Projects Failed</p>
+          <p class="card-big danger" id="projects-failed">—</p>
+        </div>
+      </section>
+
+      <!-- Graphs -->
+      <section class="graphs-section">
+        <!-- XP over time — wide -->
+        <div class="graph-card wide">
+          <p class="graph-title">XP Earned Over Time</p>
+          <div id="xp-timeline-chart" class="chart-area"></div>
+        </div>
+
+        <!-- Pass/Fail donut -->
+        <div class="graph-card">
+          <p class="graph-title">Pass / Fail Ratio</p>
+          <div id="pass-fail-chart" class="chart-area chart-center"></div>
+        </div>
+
+        <!-- Audit ratio bar -->
+        <div class="graph-card">
+          <p class="graph-title">Audit Ratio</p>
+          <div id="audit-chart" class="chart-area chart-center"></div>
+        </div>
+      </section>
+
+      <!-- Top Projects by XP -->
+      <section class="projects-section">
+        <p class="section-title">Top Projects by XP Earned</p>
+        <div id="projects-list" class="projects-list"></div>
+      </section>
+
+    </div><!-- /profile-content -->
+  </main>
+
+  <script src="./static/js/graphql.js"></script>
+  <script src="./static/js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reboot01 — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/login.css"/>
+</head>
+<body>
+  <div class="grid-bg"></div>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="brand">
+        <span class="brand-tag">01</span>
+        <h1>REBOOT<br/><em>PROFILE</em></h1>
+      </div>
+      <p class="subtitle">Sign in to view your journey</p>
+
+      <div class="form-group">
+        <label for="identifier">Username or Email</label>
+        <input type="text" id="identifier" placeholder="your_login or email@domain.com" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+
+      <div id="error-msg" class="error-msg hidden"></div>
+
+      <button id="login-btn" class="btn-login">
+        <span id="btn-text">Sign In</span>
+        <span id="btn-loader" class="hidden">Authenticating...</span>
+      </button>
+    </div>
+
+    <div class="deco-panel">
+      <div class="deco-lines"></div>
+      <div class="deco-text">
+        <p>XP TRACKER</p>
+        <p>AUDIT RATIO</p>
+        <p>SKILL GRAPH</p>
+        <p>PROGRESS</p>
+        <p>PASS / FAIL</p>
+        <p>TIMELINE</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="./static/js/auth.js"></script>
+</body>
+</html>

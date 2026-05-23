@@ -70,7 +70,7 @@ const res = await fetch('https://learn.reboot01.com/api/auth/signin', {
     }
 
     localStorage.setItem('jwt', jwt);
-    window.location.href = '/profile.html';
+    window.location.href = './profile.html';
 
   } catch (err) {
     showError(err.message);

@@ -63,14 +63,13 @@
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
 
-var xpMapAll = {};
-(user.transactions || []).forEach(function (t) {
-  if (!t.type || t.type.toLowerCase() !== 'xp' || !t.path) return;
-  if (!xpMapAll[t.path] || t.amount > xpMapAll[t.path]) {
-    xpMapAll[t.path] = t.amount;
-  }
-});
-var totalXP = Object.values(xpMapAll).reduce(function (a, b) { return a + b; }, 0);
+var totalXP = (user.transactions || [])
+  .filter(function (t) {
+    return t.type && t.type.toLowerCase() === 'xp';
+  })
+  .reduce(function (sum, t) {
+    return sum + (t.amount || 0);
+  }, 0);
 
 // keep xpMap ONLY for visualization
 var xpMap = {};
@@ -147,7 +146,11 @@ function fmtAudit(n) {
   if (n >= 1000) return (n / 1000).toFixed(1) + ' kB';
   return n + ' B';
 }
-
+  function fmtXP(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(2) + ' MB';
+    if (n >= 1000) return (n / 1000).toFixed(1) + ' kB';
+    return n + ' B';
+  }
 
   function svgEl(tag, attrs) {
     var e = document.createElementNS('http://www.w3.org/2000/svg', tag);

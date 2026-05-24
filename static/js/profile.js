@@ -46,8 +46,18 @@
     var level = user.level && user.level[0] ? user.level[0].amount : 0;
 
     var xpTransactions = (user.transactions || []).filter(function (t) {
-      return t.type && t.type.toLowerCase() === 'xp';
-    });
+  if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+  if (!t.path) return false;
+
+  var path = t.path.toLowerCase();
+
+  return (
+    path.startsWith('/bahrain/bh-module') &&
+    !path.includes('piscine') &&
+    !path.includes('onboarding') &&
+    !path.includes('exam')
+  );
+});
 
     xpTransactions.sort(function (a, b) {
       return new Date(a.createdAt) - new Date(b.createdAt);
@@ -66,8 +76,24 @@
       return a + b;
     }, 0);
 
-    var auditUp = user.totalUp || 0;
-    var auditDown = user.totalDown || 0;
+    var auditUp = 0;
+var auditDown = 0;
+
+user.transactions.forEach(function (t) {
+  if (!t.path) return;
+
+  var path = t.path.toLowerCase();
+
+  if (
+    path.startsWith('/bahrain/bh-module') &&
+    !path.includes('piscine') &&
+    !path.includes('onboarding') &&
+    !path.includes('exam')
+  ) {
+    if (t.type === 'up') auditUp += t.amount || 0;
+    if (t.type === 'down') auditDown += t.amount || 0;
+  }
+});
     var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(2) : 'N/A';
 
     // REAL pass/fail logic (progress-based)

@@ -2,11 +2,11 @@
   'use strict';
 
   var jwt = localStorage.getItem('jwt');
-  if (!jwt) { window.location.href = '/'; return; }
+  if (!jwt) { window.location.replace('/graphql/');; return; }
 
   document.getElementById('logout-btn').addEventListener('click', function () {
     localStorage.removeItem('jwt');
-    window.location.href = '/';
+    window.location.replace('/graphql/');;
   });
 
   (async function init() {

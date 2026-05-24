@@ -1,3 +1,8 @@
+// Already logged in → skip login page
+if (localStorage.getItem('jwt')) {
+  window.location.replace('./profile.html');
+}
+
 const loginBtn  = document.getElementById('login-btn');
 const btnText   = document.getElementById('btn-text');
 const btnLoader = document.getElementById('btn-loader');
@@ -70,7 +75,7 @@ const res = await fetch('https://learn.reboot01.com/api/auth/signin', {
     }
 
     localStorage.setItem('jwt', jwt);
-    window.location.href = './profile.html';
+    window.location.replace('./profile.html');
 
   } catch (err) {
     showError(err.message);

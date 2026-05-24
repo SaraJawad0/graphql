@@ -110,8 +110,8 @@ xpTransactions.forEach(function (t) {
     document.getElementById('user-level').textContent = level;
     document.getElementById('total-xp').textContent = fmtXP(totalXP);
     document.getElementById('audit-ratio').textContent = ratio;
-    document.getElementById('xp-up').textContent = fmtAudit(auditUp);
-    document.getElementById('xp-down').textContent = fmtAudit(auditDown);
+    document.getElementById('xp-up').textContent = fmtXP(auditUp);
+    document.getElementById('xp-down').textContent = fmtXP(auditDown);
     document.getElementById('projects-passed').textContent = passCount;
     document.getElementById('projects-failed').textContent = failCount;
 
@@ -374,7 +374,7 @@ function fmtAudit(n) {
       }, 100 + i * 100);
 
       var vl = svgEl('text', { x: startX + barMaxW + 6, y: y + barH/2 + 4, fill: color, 'font-size': 9, 'font-family': 'Space Mono, monospace' });
-      vl.textContent = fmtAudit(val);
+      vl.textContent = fmtXP(val);
       svg.appendChild(vl);
     });
 

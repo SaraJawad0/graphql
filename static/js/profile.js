@@ -63,9 +63,13 @@
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
 
-var totalXP = xpTransactions.reduce(function (sum, t) {
-  return sum + (t.amount || 0);
-}, 0);
+var totalXP = (user.transactions || [])
+  .filter(function (t) {
+    return t.type && t.type.toLowerCase() === 'xp';
+  })
+  .reduce(function (sum, t) {
+    return sum + (t.amount || 0);
+  }, 0);
 
 // keep xpMap ONLY for visualization
 var xpMap = {};

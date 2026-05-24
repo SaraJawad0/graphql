@@ -369,7 +369,7 @@
       svg.appendChild(vl);
     });
 
-    var ratio = down > 0 ? (up / down).toFixed(2) : 'N/A';
+    var ratio = down > 0 ? (up / down).toFixed(1) : 'N/A';
     var ratioColor = parseFloat(ratio) >= 1 ? '#00ff88' : '#ff4d4d';
     var rt = svgEl('text', { x: W/2, y: 30, 'text-anchor': 'middle', fill: ratioColor, 'font-size': 28, 'font-weight': 700, 'font-family': 'Space Mono, monospace' });
     rt.textContent = ratio;

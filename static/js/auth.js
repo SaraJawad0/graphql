@@ -36,7 +36,6 @@ async function doLogin() {
 
   try {
     // Build Basic auth credentials — base64(identifier:password)
-    // We send the base64 string to Go; Go adds the "Basic " prefix and forwards it.
 const credentials = btoa(`${identifier}:${password}`);
 
 const res = await fetch('https://learn.reboot01.com/api/auth/signin', {

@@ -91,7 +91,7 @@
       };
     }));
 
-    // keep xpMap ONLY for visualization
+    // 
     var xpMap = {};
     xpTransactions.forEach(function (t) {
       if (t.path) {

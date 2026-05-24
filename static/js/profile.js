@@ -106,29 +106,22 @@
     var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(1) : 'N/A';
 
     // REAL pass/fail logic — failed = project not done AND has a negative XP transaction
- var passCount = 0;
+var passCount = 0;
 var failCount = 0;
-var passed = {};
-var failed = {};
+var passedPaths = {};
+var failedPaths = {};
 
 projects.forEach(function (p) {
   if (!p.path) return;
   if (p.grade > 0) {
-    passed[p.path] = true;
-  } else {
-    // grade === 0 means failed attempt
-    if (!failed[p.path]) failed[p.path] = 0;
-    failed[p.path]++;
+    passedPaths[p.path] = true;
+  } else if (p.grade === 0) {
+    failedPaths[p.path] = true;
   }
 });
 
-Object.keys(passed).forEach(function (path) {
-  passCount++;
-  // if they eventually passed, don't double-count as failed
-  delete failed[path];
-});
-
-failCount = Object.keys(failed).length;
+passCount = Object.keys(passedPaths).length;
+failCount = Object.keys(failedPaths).length;
 
     // DOM
     document.getElementById('header-login').textContent = user.login;

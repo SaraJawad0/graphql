@@ -63,18 +63,19 @@
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
 
-    var xpMap = {};
-    xpTransactions.forEach(function (t) {
-      if (t.path) {
-        if (!xpMap[t.path] || t.amount > xpMap[t.path]) {
-          xpMap[t.path] = t.amount;
-        }
-      }
-    });
-
-    var totalXP = xpTransactions.reduce(function (sum, t) {
+var totalXP = xpTransactions.reduce(function (sum, t) {
   return sum + (t.amount || 0);
 }, 0);
+
+// keep xpMap ONLY for visualization
+var xpMap = {};
+xpTransactions.forEach(function (t) {
+  if (t.path) {
+    if (!xpMap[t.path] || t.amount > xpMap[t.path]) {
+      xpMap[t.path] = t.amount;
+    }
+  }
+});
 
     var auditUp = user.totalUp || 0;
     var auditDown = user.totalDown || 0;

@@ -16,7 +16,7 @@
 
       if (!user) throw new Error('No user data returned.');
 
-      // ✅ FIX 1: correct project filtering (backend-safe logic)
+      // 
       var projects = (data.projects || []).filter(function (p) {
         if (!p.path) return false;
 
@@ -70,7 +70,7 @@
     var auditDown = user.totalDown || 0;
     var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(2) : 'N/A';
 
-    // ✅ FIX 2: REAL pass/fail logic (progress-based)
+    // REAL pass/fail logic (progress-based)
     var passCount = 0;
     var failCount = 0;
 

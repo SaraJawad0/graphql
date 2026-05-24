@@ -137,15 +137,7 @@ xpTransactions.forEach(function (t) {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('profile-content').classList.remove('hidden');
   }
-function fmtXP(n) {
-  if (n >= 1000) return (n / 1000).toFixed(1) + ' kB';
-  return n + ' B';
-}
-function fmtAudit(n) {
-  if (n >= 1000000) return (n / 1000000).toFixed(2) + ' MB';
-  if (n >= 1000) return (n / 1000).toFixed(1) + ' kB';
-  return n + ' B';
-}
+
   function fmtXP(n) {
     if (n >= 1000000) return (n / 1000000).toFixed(2) + ' MB';
     if (n >= 1000) return (n / 1000).toFixed(1) + ' kB';

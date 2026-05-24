@@ -374,7 +374,7 @@ function fmtAudit(n) {
       }, 100 + i * 100);
 
       var vl = svgEl('text', { x: startX + barMaxW + 6, y: y + barH/2 + 4, fill: color, 'font-size': 9, 'font-family': 'Space Mono, monospace' });
-      vl.textContent = fmtXP(val);
+      vl.textContent = fmtAudit(val);
       svg.appendChild(vl);
     });
 

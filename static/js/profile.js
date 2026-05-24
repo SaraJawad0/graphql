@@ -72,9 +72,9 @@
       }
     });
 
-    var totalXP = Object.values(xpMap).reduce(function (a, b) {
-      return a + b;
-    }, 0);
+    var totalXP = xpTransactions.reduce(function (sum, t) {
+  return sum + (t.amount || 0);
+}, 0);
 
     var auditUp = user.totalUp || 0;
     var auditDown = user.totalDown || 0;

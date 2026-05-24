@@ -67,11 +67,30 @@ var totalXP = (user.transactions || [])
   .filter(function (t) {
     if (!t.type || t.type.toLowerCase() !== 'xp') return false;
     if (!t.path) return false;
-    return t.path.toLowerCase().startsWith('/bahrain/bh-module');
+    var path = t.path.toLowerCase();
+    if (!path.startsWith('/bahrain/bh-module')) return false;
+    // exclude individual piscine exercise transactions — only keep the top-level piscine summary
+    if (path.startsWith('/bahrain/bh-module/piscine-js/')) return false;
+    return true;
   })
   .reduce(function (sum, t) {
     return sum + (t.amount || 0);
   }, 0);
+
+  // DEBUG — remove after fixing
+var debugTxns = (user.transactions || []).filter(function (t) {
+  if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+  if (!t.path) return false;
+  return t.path.toLowerCase().startsWith('/bahrain/bh-module');
+});
+console.log('Total transactions counted:', debugTxns.length);
+console.table(debugTxns.map(function(t) {
+  return {
+    path: t.path,
+    amount: t.amount,
+    date: t.createdAt
+  };
+}));
 
 // keep xpMap ONLY for visualization
 var xpMap = {};
@@ -142,7 +161,7 @@ xpTransactions.forEach(function (t) {
 
   function fmtXP(n) {
     if (n >= 1000000) return (n / 1000000).toFixed(2) + ' MB';
-    if (n >= 1000) return (n / 1000).toFixed(1) + ' kB';
+    if (n >= 1000) return Math.round(n / 1000) + ' kB';
     return n + ' B';
   }
 

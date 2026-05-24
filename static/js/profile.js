@@ -209,10 +209,31 @@ user.transactions.forEach(function (t) {
     var cH = H - PAD.top  - PAD.bottom;
 
     var cumulative = 0;
-    var points = txns.map(function (t) {
-      cumulative += t.amount;
-      return { date: new Date(t.createdAt), xp: cumulative, raw: t.amount, path: t.path };
-    });
+    var filteredTxns = txns.filter(function (t) {
+  if (!t.path) return false;
+
+  var path = t.path.toLowerCase();
+
+  return (
+    path.startsWith('/bahrain/bh-module') &&
+    !path.includes('piscine') &&
+    !path.includes('onboarding') &&
+    !path.includes('exam')
+  );
+});
+
+var cumulative = 0;
+
+var points = filteredTxns.map(function (t) {
+  cumulative += t.amount;
+  return {
+    date: new Date(t.createdAt),
+    xp: cumulative,
+    raw: t.amount,
+    path: t.path
+  };
+});
+
 
     var minDate = points[0].date.getTime();
     var maxDate = points[points.length - 1].date.getTime();

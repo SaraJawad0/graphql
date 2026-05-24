@@ -78,7 +78,7 @@
 
     var auditUp = user.totalUp || 0;
     var auditDown = user.totalDown || 0;
-    var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(2) : 'N/A';
+    var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(1) : 'N/A';
 
     // REAL pass/fail logic (progress-based)
     var passCount = 0;

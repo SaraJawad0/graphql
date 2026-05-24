@@ -16,7 +16,6 @@
 
       if (!user) throw new Error('No user data returned.');
 
-      // 
       var projects = (data.projects || []).filter(function (p) {
         if (!p.path) return false;
 
@@ -46,82 +45,90 @@
     var level = user.level && user.level[0] ? user.level[0].amount : 0;
 
     var xpTransactions = (user.transactions || []).filter(function (t) {
-  if (!t.type || t.type.toLowerCase() !== 'xp') return false;
-  if (!t.path) return false;
+      if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+      if (!t.path) return false;
 
-  var path = t.path.toLowerCase();
+      var path = t.path.toLowerCase();
 
-  return (
-    path.startsWith('/bahrain/bh-module') &&
-    !path.includes('piscine') &&
-    !path.includes('onboarding') &&
-    !path.includes('exam')
-  );
-});
+      return (
+        path.startsWith('/bahrain/bh-module') &&
+        !path.includes('piscine') &&
+        !path.includes('onboarding') &&
+        !path.includes('exam')
+      );
+    });
 
     xpTransactions.sort(function (a, b) {
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
 
-var totalXP = (user.transactions || [])
-  .filter(function (t) {
-    if (!t.type || t.type.toLowerCase() !== 'xp') return false;
-    if (!t.path) return false;
-    var path = t.path.toLowerCase();
-    if (!path.startsWith('/bahrain/bh-module')) return false;
-    // exclude individual piscine exercise transactions — only keep the top-level piscine summary
-    if (path.startsWith('/bahrain/bh-module/piscine-js/')) return false;
-    return true;
-  })
-  .reduce(function (sum, t) {
-    return sum + (t.amount || 0);
-  }, 0);
+    var totalXP = (user.transactions || [])
+      .filter(function (t) {
+        if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+        if (!t.path) return false;
+        var path = t.path.toLowerCase();
+        if (!path.startsWith('/bahrain/bh-module')) return false;
+        // exclude individual piscine exercise transactions — only keep the top-level piscine summary
+        if (path.startsWith('/bahrain/bh-module/piscine-js/')) return false;
+        return true;
+      })
+      .reduce(function (sum, t) {
+        return sum + (t.amount || 0);
+      }, 0);
 
-  // DEBUG — remove after fixing
-var debugTxns = (user.transactions || []).filter(function (t) {
-  if (!t.type || t.type.toLowerCase() !== 'xp') return false;
-  if (!t.path) return false;
-  return t.path.toLowerCase().startsWith('/bahrain/bh-module');
-});
-console.log('Total transactions counted:', debugTxns.length);
-console.table(debugTxns.map(function(t) {
-  return {
-    path: t.path,
-    amount: t.amount,
-    date: t.createdAt
-  };
-}));
+    // DEBUG — remove after fixing
+    var debugTxns = (user.transactions || []).filter(function (t) {
+      if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+      if (!t.path) return false;
+      return t.path.toLowerCase().startsWith('/bahrain/bh-module');
+    });
+    console.log('Total transactions counted:', debugTxns.length);
+    console.table(debugTxns.map(function(t) {
+      return {
+        path: t.path,
+        amount: t.amount,
+        date: t.createdAt
+      };
+    }));
 
-// keep xpMap ONLY for visualization
-var xpMap = {};
-xpTransactions.forEach(function (t) {
-  if (t.path) {
-    if (!xpMap[t.path] || t.amount > xpMap[t.path]) {
-      xpMap[t.path] = t.amount;
-    }
-  }
-});
+    // keep xpMap ONLY for visualization
+    var xpMap = {};
+    xpTransactions.forEach(function (t) {
+      if (t.path) {
+        if (!xpMap[t.path] || t.amount > xpMap[t.path]) {
+          xpMap[t.path] = t.amount;
+        }
+      }
+    });
 
     var auditUp = user.totalUp || 0;
     var auditDown = user.totalDown || 0;
     var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(1) : 'N/A';
 
-    // REAL pass/fail logic (progress-based)
-    var passCount = 0;
-    var failCount = 0;
+    // REAL pass/fail logic — failed = project not done AND has a negative XP transaction
+ var passCount = 0;
+var failCount = 0;
+var passed = {};
+var failed = {};
 
-    var seen = {};
+projects.forEach(function (p) {
+  if (!p.path) return;
+  if (p.grade > 0) {
+    passed[p.path] = true;
+  } else {
+    // grade === 0 means failed attempt
+    if (!failed[p.path]) failed[p.path] = 0;
+    failed[p.path]++;
+  }
+});
 
-    projects.forEach(function (p) {
-      if (!p.path || seen[p.path]) return;
-      seen[p.path] = true;
+Object.keys(passed).forEach(function (path) {
+  passCount++;
+  // if they eventually passed, don't double-count as failed
+  delete failed[path];
+});
 
-      if (p.isDone === true) {
-        passCount++;
-      } else {
-        failCount++;
-      }
-    });
+failCount = Object.keys(failed).length;
 
     // DOM
     document.getElementById('header-login').textContent = user.login;
@@ -181,7 +188,6 @@ xpTransactions.forEach(function (t) {
       style: 'display:block; overflow:visible'
     });
   }
-
 
   // Tooltip
   var tooltip = null;

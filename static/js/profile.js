@@ -63,14 +63,15 @@
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
 
-var xpMapAll = {};
-(user.transactions || []).forEach(function (t) {
-  if (!t.type || t.type.toLowerCase() !== 'xp' || !t.path) return;
-  if (!xpMapAll[t.path] || t.amount > xpMapAll[t.path]) {
-    xpMapAll[t.path] = t.amount;
-  }
-});
-var totalXP = Object.values(xpMapAll).reduce(function (a, b) { return a + b; }, 0);
+var totalXP = (user.transactions || [])
+  .filter(function (t) {
+    if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+    if (!t.path) return false;
+    return t.path.toLowerCase().startsWith('/bahrain/bh-module');
+  })
+  .reduce(function (sum, t) {
+    return sum + (t.amount || 0);
+  }, 0);
 
 // keep xpMap ONLY for visualization
 var xpMap = {};

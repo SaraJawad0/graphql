@@ -2,11 +2,11 @@
   'use strict';
 
   var jwt = localStorage.getItem('jwt');
-  if (!jwt) { window.location.replace('/graphql/');; return; }
+  if (!jwt) { window.location.replace('/graphql/'); return; }
 
   document.getElementById('logout-btn').addEventListener('click', function () {
     localStorage.removeItem('jwt');
-    window.location.replace('/graphql/');;
+    window.location.replace('/graphql/');
   });
 
   (async function init() {
@@ -16,7 +16,6 @@
 
       if (!user) throw new Error('No user data returned.');
 
-      // 
       var projects = (data.projects || []).filter(function (p) {
         if (!p.path) return false;
 
@@ -45,30 +44,34 @@
 
     var level = user.level && user.level[0] ? user.level[0].amount : 0;
 
+    /* =========================
+       XP FILTERED TRANSACTIONS
+    ========================== */
     var xpTransactions = (user.transactions || []).filter(function (t) {
-  if (!t.type || t.type.toLowerCase() !== 'xp') return false;
-  if (!t.path) return false;
+      if (!t.type || t.type.toLowerCase() !== 'xp') return false;
+      if (!t.path) return false;
 
-  var path = t.path.toLowerCase();
+      var path = t.path.toLowerCase();
 
-  return (
-    path.startsWith('/bahrain/bh-module') &&
-    !path.includes('piscine') &&
-    !path.includes('onboarding') &&
-    !path.includes('exam')
-  );
-});
+      return (
+        path.startsWith('/bahrain/bh-module') &&
+        !path.includes('piscine') &&
+        !path.includes('onboarding') &&
+        !path.includes('exam')
+      );
+    });
 
     xpTransactions.sort(function (a, b) {
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
 
+    /* =========================
+       XP CALCULATION 
+    ========================== */
     var xpMap = {};
     xpTransactions.forEach(function (t) {
-      if (t.path) {
-        if (!xpMap[t.path] || t.amount > xpMap[t.path]) {
-          xpMap[t.path] = t.amount;
-        }
+      if (!xpMap[t.path] || t.amount > xpMap[t.path]) {
+        xpMap[t.path] = t.amount;
       }
     });
 
@@ -76,27 +79,22 @@
       return a + b;
     }, 0);
 
+    /* =========================
+       AUDIT 
+    ========================== */
     var auditUp = 0;
-var auditDown = 0;
+    var auditDown = 0;
 
-user.transactions.forEach(function (t) {
-  if (!t.path) return;
+    xpTransactions.forEach(function (t) {
+      if (t.type === 'up') auditUp += t.amount || 0;
+      if (t.type === 'down') auditDown += t.amount || 0;
+    });
 
-  var path = t.path.toLowerCase();
-
-  if (
-    path.startsWith('/bahrain/bh-module') &&
-    !path.includes('piscine') &&
-    !path.includes('onboarding') &&
-    !path.includes('exam')
-  ) {
-    if (t.type === 'up') auditUp += t.amount || 0;
-    if (t.type === 'down') auditDown += t.amount || 0;
-  }
-});
     var ratio = auditDown > 0 ? (auditUp / auditDown).toFixed(2) : 'N/A';
 
-    // REAL pass/fail logic (progress-based)
+    /* =========================
+       PASS / FAIL PROJECTS
+    ========================== */
     var passCount = 0;
     var failCount = 0;
 
@@ -106,35 +104,35 @@ user.transactions.forEach(function (t) {
       if (!p.path || seen[p.path]) return;
       seen[p.path] = true;
 
-      if (p.isDone === true) {
-        passCount++;
-      } else {
-        failCount++;
-      }
+      if (p.isDone === true) passCount++;
+      else failCount++;
     });
 
-    // DOM
+    /* =========================
+       DOM
+    ========================== */
     document.getElementById('header-login').textContent = user.login;
     document.getElementById('user-login').textContent = user.login;
     document.getElementById('user-id').textContent = 'ID: ' + user.id;
     document.getElementById('avatar-char').textContent = user.login[0].toUpperCase();
     document.getElementById('user-level').textContent = level;
+
     document.getElementById('total-xp').textContent = fmtXP(totalXP);
     document.getElementById('audit-ratio').textContent = ratio;
     document.getElementById('xp-up').textContent = fmtXP(auditUp);
     document.getElementById('xp-down').textContent = fmtXP(auditDown);
+
     document.getElementById('projects-passed').textContent = passCount;
     document.getElementById('projects-failed').textContent = failCount;
 
+    /* =========================
+       GRAPH DATA (ALREADY FILTERED)
+    ========================== */
     drawXPTimeline(xpTransactions);
     drawPassFailDonut(passCount, failCount);
     drawAuditBars(auditUp, auditDown);
 
-    // keep XP map ONLY for visualization (not filtering logic)
     var projectBars = Object.keys(xpMap)
-      .filter(function (path) {
-        return path.startsWith('/bahrain/bh-module');
-      })
       .map(function (path) {
         return {
           name: path.split('/').pop(),
@@ -172,8 +170,6 @@ user.transactions.forEach(function (t) {
     });
   }
 
-
-  // Tooltip
   var tooltip = null;
   function getTooltip() {
     if (!tooltip) {
@@ -184,16 +180,19 @@ user.transactions.forEach(function (t) {
     }
     return tooltip;
   }
+
   function showTip(html, x, y) {
     var t = getTooltip();
     if (html) t.innerHTML = html;
     t.style.left = (x + 14) + 'px';
-    t.style.top  = (y - 10) + 'px';
+    t.style.top = (y - 10) + 'px';
     t.style.opacity = '1';
   }
+
   function hideTip() {
     getTooltip().style.opacity = '0';
   }
+
 
   // Graph 1: XP Over Time
   function drawXPTimeline(txns) {
@@ -209,31 +208,10 @@ user.transactions.forEach(function (t) {
     var cH = H - PAD.top  - PAD.bottom;
 
     var cumulative = 0;
-    var filteredTxns = txns.filter(function (t) {
-  if (!t.path) return false;
-
-  var path = t.path.toLowerCase();
-
-  return (
-    path.startsWith('/bahrain/bh-module') &&
-    !path.includes('piscine') &&
-    !path.includes('onboarding') &&
-    !path.includes('exam')
-  );
-});
-
-var cumulative = 0;
-
-var points = filteredTxns.map(function (t) {
-  cumulative += t.amount;
-  return {
-    date: new Date(t.createdAt),
-    xp: cumulative,
-    raw: t.amount,
-    path: t.path
-  };
-});
-
+    var points = txns.map(function (t) {
+      cumulative += t.amount;
+      return { date: new Date(t.createdAt), xp: cumulative, raw: t.amount, path: t.path };
+    });
 
     var minDate = points[0].date.getTime();
     var maxDate = points[points.length - 1].date.getTime();
